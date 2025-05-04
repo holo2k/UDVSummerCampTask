@@ -18,13 +18,10 @@ namespace UDVSummerCampTask.Services.Letter
 
         public async Task AddLetters(HashSet<LetterFrequency> frequencies, string userId)
         {
-            var dt = DateTime.UtcNow;
-
             foreach (var freq in frequencies)
             {
                 var entity = mapper.Map<LetterFrequencyEntity>(freq);
                 entity.UserId = userId;
-                entity.CalculatedAt = dt;
 
                 await letterRepository.Add(entity);
             }

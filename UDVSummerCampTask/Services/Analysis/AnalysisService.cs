@@ -13,7 +13,8 @@ namespace UDVSummerCampTask.Services.Analysis
                 .Select(g => new LetterFrequency
                 {
                     Letter = g.Key,
-                    Count = g.Count()
+                    Count = g.Count(),
+                    CalculatedAt = DateTime.UtcNow
                 })
                 .ToHashSet();
         }

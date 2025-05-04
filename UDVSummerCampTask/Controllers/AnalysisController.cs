@@ -76,14 +76,14 @@ namespace UDVSummerCampTask.Controllers
         }
 
         /// <summary>
-        /// Получает частоту букв по ID пользователя.
+        /// Получает частоту букв по ID пользователя из базы данных.
         /// </summary>
         /// <param name="userId">Идентификатор пользователя ВК.</param>
         /// <returns>Список частот букв для указанного пользователя.</returns>
         [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerOperation("Получает частоту букв по ID пользователя.")]
+        [SwaggerOperation("Получает частоту букв по ID пользователя из базы данных.")]
         [SwaggerResponse(200, "Данные частоты букв успешно получены", typeof(List<LetterFrequency>))]
         [SwaggerResponse(400, "Ошибка при получении данных из базы")]
         public IActionResult GetByUserId(string userId)
