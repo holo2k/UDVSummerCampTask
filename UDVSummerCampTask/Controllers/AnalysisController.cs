@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UDVSummerCampTask.DAL;
+using Swashbuckle.Swagger.Annotations;
 using UDVSummerCampTask.Models;
 using UDVSummerCampTask.Services;
 using UDVSummerCampTask.Services.Analysis;
@@ -28,7 +28,21 @@ namespace UDVSummerCampTask.Controllers
             this.letterService = letterService;
         }
 
+        /// <summary>
+        /// Анализирует последние посты пользователя ВК и подсчитывает частоту букв.
+        /// </summary>
+        /// <remarks>
+        /// Этот метод использует VK API для получения последних постов пользователя и анализирует их содержимое.
+        /// Результаты анализа частоты букв сохраняются в базу данных.
+        /// </remarks>
+        /// <param name="userId">Идентификатор пользователя ВК.</param>
+        /// <returns>Список частот букв, отсортированный по алфавиту.</returns>
         [HttpPost("process")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation("Анализирует последние посты пользователя ВК и подсчитывает частоту букв.")]
+        [SwaggerResponse(200, "Анализ завершён успешно", typeof(List<LetterFrequency>))]
+        [SwaggerResponse(400, "Ошибка при анализе или сохранении данных")]
         public async Task<IActionResult> Analyze([FromQuery] string userId)
         {
             logger.LogInformation("Анализ запущен для: {Id}", userId);
@@ -61,7 +75,17 @@ namespace UDVSummerCampTask.Controllers
             return Ok(result.OrderBy(f => f.Letter));
         }
 
+        /// <summary>
+        /// Получает частоту букв по ID пользователя.
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя ВК.</param>
+        /// <returns>Список частот букв для указанного пользователя.</returns>
         [HttpGet("{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation("Получает частоту букв по ID пользователя.")]
+        [SwaggerResponse(200, "Данные частоты букв успешно получены", typeof(List<LetterFrequency>))]
+        [SwaggerResponse(400, "Ошибка при получении данных из базы")]
         public IActionResult GetByUserId(string userId)
         {
             try

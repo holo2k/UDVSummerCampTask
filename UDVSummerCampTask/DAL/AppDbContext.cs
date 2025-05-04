@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UDVSummerCampTask.DAL.Entities;
-using UDVSummerCampTask.Models;
 
 namespace UDVSummerCampTask.DAL
 {

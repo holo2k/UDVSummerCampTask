@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using UDVSummerCampTask.DAL.Entities;
+﻿using UDVSummerCampTask.DAL.Entities;
 
 namespace UDVSummerCampTask.DAL.Repository
 {

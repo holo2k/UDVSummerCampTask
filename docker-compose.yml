@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: udv_db
+    environment:
+      POSTGRES_DB: udv_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d udv_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internship_network
+
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: udv_webapp
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=udv_db;Username=postgres;Password=postgres
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    networks:
+      - internship_network
+    links:
+      - postgres
+
+volumes:
+  postgres_data:
+
+networks:
+  internship_network:
+    driver: bridge

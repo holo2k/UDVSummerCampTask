@@ -5,16 +5,15 @@ namespace UDVSummerCampTask.Services
 {
     public class VkService
     {
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _config;
+        private readonly HttpClient httpClient;
+        private readonly IConfiguration config;
 
         public VkService(HttpClient httpClient, IConfiguration config)
         {
-            _httpClient = httpClient;
-            _config = config;
+            this.httpClient = httpClient;
+            this.config = config;
         }
 
-        // Главный метод — получить список текстов постов
         public async Task<List<Post>> GetLastPostsAsync(string userInput)
         {
             int ownerId = await ResolveOwnerIdAsync(userInput);
@@ -23,7 +22,7 @@ namespace UDVSummerCampTask.Services
 
         public async Task<int> ResolveOwnerIdAsync(string input)
         {
-            var token = _config["Vk:AccessToken"];
+            var token = config["Vk:AccessToken"];
 
             if (int.TryParse(input, out int numericId))
             {
@@ -32,7 +31,7 @@ namespace UDVSummerCampTask.Services
 
             var url = $"https://api.vk.com/method/utils.resolveScreenName?screen_name={input}&access_token={token}&v=5.199";
 
-            var response = await _httpClient.GetFromJsonAsync<JsonElement>(url);
+            var response = await httpClient.GetFromJsonAsync<JsonElement>(url);
 
             if (!response.TryGetProperty("response", out var data) || data.ValueKind != JsonValueKind.Object)
             {
@@ -44,18 +43,19 @@ namespace UDVSummerCampTask.Services
 
             return type switch
             {
-                "user" => objectId,
-                "group" => -objectId,
+                "user" => objectId,   // если это пользователь — возвращаем ID как есть
+                "group" => -objectId, // если это группа — возвращаем отрицательный ID
+                                      // (VK API использует отрицательные ID для групп)
                 _ => throw new Exception($"Unsupported VK object type: {type}")
             };
         }
 
         public async Task<List<Post>> GetPostsByOwnerIdAsync(int ownerId)
         {
-            var token = _config["Vk:AccessToken"];
+            var token = config["Vk:AccessToken"];
             var url = $"https://api.vk.com/method/wall.get?owner_id={ownerId}&count=5&access_token={token}&v=5.199";
 
-            var json = await _httpClient.GetFromJsonAsync<JsonElement>(url);
+            var json = await httpClient.GetFromJsonAsync<JsonElement>(url);
 
             if (json.TryGetProperty("error", out var error))
             {
